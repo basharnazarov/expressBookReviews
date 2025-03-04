@@ -22,15 +22,21 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   //Write your code here
-  return res.status(200).send(JSON.stringify(books));
+  return res.status(200).json(JSON.stringify(books));
 });
+
+// get all users for testing purpose only
+public_users.get('/users',function (req, res) {
+    //Write your code here
+    return res.status(200).json(JSON.stringify(users));
+  });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
   if(isbn){
-    return res.status(200).send(books[isbn]);
+    return res.status(200).json(books[isbn]);
   } else {
    return res.status(404).json({message:"unable to find book"});
   }
@@ -40,12 +46,14 @@ public_users.get('/isbn/:isbn',function (req, res) {
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
   const name = req.params.author;
+  let result = []
   if(name){
     for (let key in books) {
-      if (books[key].author.includes(name)) {
-        return res.status(200).send(JSON.stringify(books[key]));
+      if (books[key].author.toLowerCase().includes(name.toLowerCase())) {
+        result.push(books[key])
       };
     }
+    return res.status(200).json(result);
   }
 
   return res.status(300).json({message: "not found any details"});
@@ -55,14 +63,15 @@ public_users.get('/author/:author',function (req, res) {
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
   const name = req.params.title;
+  let result = []
   if(name){
     for (let key in books) {
-      if (books[key].title.includes(name)) {
-        return res.status(200).send(JSON.stringify(books[key]));
+      if (books[key].title.toLowerCase().includes(name.toLowerCase())) {
+        result.push(books[key])
       };
     }
+    return res.status(200).json(result);
   }
-
   return res.status(300).json({message: "not found any details"});
 });
 
