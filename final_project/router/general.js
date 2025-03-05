@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -24,6 +25,62 @@ public_users.get('/',function (req, res) {
   //Write your code here
   return res.status(200).json(books);
 });
+
+// task 10
+let getAllBooks = async () => {
+    try {
+        const response = await axios.get('https://basharodilov-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/');
+        console.log("Success:", response);
+        const books = response;
+        console.log("Books:", books);
+        return books;
+    } catch (error) {
+        console.error("Error:", error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
+
+//task 11
+let getBookByISBN = async (isbn) => {
+    try {
+        const response = await axios.get(`https://basharodilov-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/isbn/${isbn}`);
+        console.log("Success:", response);
+        const book = response;
+        console.log("Book", book);
+        return books;
+    } catch (error) {
+        console.error("Error:", error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
+
+//task 12
+let getBookByAuthor = async (author) => {
+    try {
+        const response = await axios.get(`https://basharodilov-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/author/${author}`);
+        console.log("Success:", response);
+        const book = response;
+        console.log("Book:", book);
+        return books;
+    } catch (error) {
+        console.error("Error:", error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
+
+//task 13
+let getBookByTitle = async (title) => {
+    try {
+        const response = await axios.get(`https://basharodilov-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/title/${title}`);
+        console.log("Success:", response);
+        const book = response;
+        console.log("Book:", book);
+        return books;
+    } catch (error) {
+        console.error("Error:", error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
 
 // get all users for testing purpose only
 public_users.get('/users',function (req, res) {
