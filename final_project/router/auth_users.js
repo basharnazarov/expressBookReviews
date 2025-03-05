@@ -25,7 +25,7 @@ regd_users.post("/login", (req,res) => {
   }
 
   if(authenticatedUser(username,password)){
-    let accessToken = jwt.sign({data: password}, "access", {expiresIn: "1h"});
+    let accessToken = jwt.sign({username, data: password}, "access", {expiresIn: "1h"});
     req.session.authorization = {accessToken, username};
     return res.status(200).json({message:"user successfully logged in"});
   } else {
@@ -38,7 +38,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const isbn = req.params.isbn;
   const review = req.query.review;
-  const username = "testuser";
+  const username = req.user.username;
 
   if(books.hasOwnProperty(isbn) && review !=="" && username) {
     books[isbn].reviews[username] = review;
@@ -52,20 +52,23 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 
 // Delete a book review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-    //Write your code here
     const isbn = req.params.isbn;
-    // const review = req.query.review;
-    const username = "testuser";
-  
-    if(books.hasOwnProperty(isbn) && username) {
-      delete books[isbn].reviews[username].review;
-      return res.status(300).json({message: "your review has been deleted successfully"});
-    } else {
-      res.status(401).json({message: "something wrong happened"})
+    const username = req.user.username;
+
+    // Check if ISBN exists in books
+    if (!books.hasOwnProperty(isbn)) {
+        return res.status(404).json({ message: "Book not found" });
     }
-  
-   
-  });
+
+    // Check if the user has a review for this book
+    if (!books[isbn].reviews.hasOwnProperty(username)) {
+        return res.status(404).json({ message: "Review not found for this user" });
+    }
+
+    // Delete the user's review
+    delete books[isbn].reviews[username];
+    return res.status(200).json({ message: "Your review has been deleted successfully" });
+});
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
